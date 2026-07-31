@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="referrer" content="origin" />
+  <title>Get Intentions</title>
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; height: 100%; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #FAF9F8;
+      color: #3D3D3D;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));
+      text-align: center;
+    }
+    .card { width: 100%; max-width: 360px; }
+    .mark {
+      width: 72px; height: 72px; margin: 0 auto 20px;
+      border-radius: 20px;
+      background: linear-gradient(160deg, #F3A9BC 0%, #E8899E 100%);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 10px 30px rgba(232, 137, 158, 0.35);
+    }
+    .mark span { color: #fff; font-size: 38px; font-weight: 700; line-height: 1; }
+    h1 { font-size: 26px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.4px; }
+    .sub { font-size: 15px; color: #6b6b6b; margin: 0 0 30px; line-height: 1.45; }
+    .btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      background: #E8899E; color: #fff; text-decoration: none;
+      font-size: 18px; font-weight: 600;
+      padding: 17px 22px; border-radius: 15px;
+      box-shadow: 0 8px 22px rgba(232, 137, 158, 0.35);
+      transition: transform .08s ease, opacity .08s ease;
+    }
+    .btn:active { transform: scale(0.98); opacity: 0.9; }
+    .btn svg { width: 20px; height: 20px; fill: #fff; }
+    .hint { font-size: 13px; color: #9E9E9E; margin-top: 22px; line-height: 1.55; }
+    .hint b { color: #6b6b6b; }
+
+    /* Worst-case nudge: point the user at Instagram's ••• → Open in browser.
+       Hidden unless we detect an in-app browser. */
+    #nudge {
+      display: none;
+      position: fixed;
+      top: calc(8px + env(safe-area-inset-top));
+      right: 10px;
+      max-width: 230px;
+      background: #3D3D3D;
+      color: #fff;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 13px;
+      line-height: 1.45;
+      text-align: left;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      z-index: 10;
+    }
+    #nudge .arrow {
+      position: absolute;
+      top: -14px; right: 16px;
+      font-size: 20px; line-height: 1;
+      color: #3D3D3D;
+      transform: translateY(-2px);
+    }
+    #nudge b { color: #fff; }
+    #nudge .big { display: block; font-weight: 700; font-size: 14px; margin-bottom: 2px; }
+    @media (prefers-color-scheme: dark) {
+      #nudge { background: #f2f2f2; color: #1c1c1c; }
+      #nudge b { color: #000; }
+      #nudge .arrow { color: #f2f2f2; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Escape hatch for in-app browsers (Instagram/Facebook) that block the App Store handoff -->
+  <div id="nudge" role="note">
+    <span class="arrow">▲</span>
+    <span class="big">Blank page? Instagram is blocking it.</span>
+    Tap the <b>•••</b> at the top&nbsp;right, then <b>“Open in&nbsp;browser.”</b>
+  </div>
+
+  <div class="card">
+    <div class="mark"><span>i</span></div>
+    <h1>Intentions</h1>
+    <p class="sub">Stop doomscrolling. Reclaim your time.</p>
+
+    <a id="cta" class="btn" href="https://apps.apple.com/us/app/intentions-stop-doomscrolling/id6757707992">
+      <svg viewBox="0 0 384 512" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26 2 49.7-11.4 69.5-34.3z"/></svg>
+      Get it on the App Store
+    </a>
+
+    <p class="hint" id="hint">Tap the button above to open the App&nbsp;Store.</p>
+  </div>
+
+  <script>
+    (function () {
+      var APP_ID = '6757707992';
+      var HTTPS  = 'https://apps.apple.com/us/app/intentions-stop-doomscrolling/id' + APP_ID;
+      var SCHEME = 'itms-apps://apps.apple.com/app/id' + APP_ID;
+
+      var ua    = navigator.userAgent || '';
+      var isIOS = /iPhone|iPad|iPod/i.test(ua) ||
+                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // iPadOS
+      // In-app browsers that block the automatic handoff to the App Store:
+      var inApp = /(FBAN|FBAV|FB_IAB|FBIOS|Instagram|Messenger|Line\/|MicroMessenger|Snapchat|Pinterest|Twitter|TikTok|musical_ly|BytedanceWebview)/i.test(ua);
+
+      // On iOS the itms-apps scheme opens the App Store app directly on a real tap.
+      var target = isIOS ? SCHEME : HTTPS;
+      document.getElementById('cta').setAttribute('href', target);
+
+      // ?preview or #preview = just show the page (no auto-redirect) for design checks.
+      var preview = /preview/.test(location.search + location.hash);
+
+      if (inApp || preview) {
+        // In an in-app browser the handoff needs a finger tap. Show the button,
+        // and surface the always-works escape hatch (••• → Open in browser).
+        document.getElementById('hint').innerHTML =
+          'If the button doesn’t open the App Store, use <b>Open in browser</b> →';
+        document.getElementById('nudge').style.display = 'block';
+      } else {
+        // Real browser (Safari / Chrome / desktop): send them straight through, no extra tap.
+        setTimeout(function () { try { window.location.href = target; } catch (e) {} }, 60);
+      }
+    })();
+  </script>
+</body>
+</html>
