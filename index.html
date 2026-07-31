@@ -11,91 +11,99 @@
     html, body { margin: 0; height: 100%; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #FAF9F8;
-      color: #3D3D3D;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: #FAF9F8; color: #3D3D3D;
+      display: flex; align-items: center; justify-content: center;
       padding: calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));
       text-align: center;
     }
     .card { width: 100%; max-width: 360px; }
     .mark {
-      width: 72px; height: 72px; margin: 0 auto 20px;
-      border-radius: 20px;
+      width: 64px; height: 64px; margin: 0 auto 18px; border-radius: 18px;
       background: linear-gradient(160deg, #F3A9BC 0%, #E8899E 100%);
       display: flex; align-items: center; justify-content: center;
       box-shadow: 0 10px 30px rgba(232, 137, 158, 0.35);
     }
-    .mark span { color: #fff; font-size: 38px; font-weight: 700; line-height: 1; }
-    h1 { font-size: 26px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.4px; }
-    .sub { font-size: 15px; color: #6b6b6b; margin: 0 0 30px; line-height: 1.45; }
+    .mark span { color: #fff; font-size: 34px; font-weight: 700; line-height: 1; }
+    h1 { font-size: 24px; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.4px; }
+    .sub { font-size: 14px; color: #6b6b6b; margin: 0 0 26px; line-height: 1.45; }
+
+    /* Direct button (Safari / TikTok / desktop) */
     .btn {
       display: flex; align-items: center; justify-content: center; gap: 10px;
       background: #E8899E; color: #fff; text-decoration: none;
-      font-size: 18px; font-weight: 600;
-      padding: 17px 22px; border-radius: 15px;
+      font-size: 18px; font-weight: 600; padding: 17px 22px; border-radius: 15px;
       box-shadow: 0 8px 22px rgba(232, 137, 158, 0.35);
       transition: transform .08s ease, opacity .08s ease;
     }
     .btn:active { transform: scale(0.98); opacity: 0.9; }
     .btn svg { width: 20px; height: 20px; fill: #fff; }
-    .hint { font-size: 13px; color: #9E9E9E; margin-top: 22px; line-height: 1.55; }
-    .hint b { color: #6b6b6b; }
+    .hint { font-size: 13px; color: #9E9E9E; margin-top: 20px; line-height: 1.55; }
 
-    /* Worst-case nudge: point the user at Instagram's ••• → Open in browser.
-       Hidden unless we detect an in-app browser. */
-    #nudge {
-      display: none;
-      position: fixed;
-      top: calc(8px + env(safe-area-inset-top));
-      right: 10px;
-      max-width: 230px;
-      background: #3D3D3D;
-      color: #fff;
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-size: 13px;
-      line-height: 1.45;
-      text-align: left;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-      z-index: 10;
+    /* Meta (Instagram/FB) instruction card — the only path that works there */
+    #steps { display: none; }
+    .steps-title { font-size: 16px; font-weight: 700; margin: 0 0 4px; }
+    .steps-sub { font-size: 13px; color: #9E9E9E; margin: 0 0 20px; }
+    ol.steps { text-align: left; margin: 0 auto; padding: 0; list-style: none; max-width: 300px; }
+    ol.steps li {
+      display: flex; align-items: flex-start; gap: 12px;
+      background: #fff; border: 1px solid rgba(232,137,158,.28); border-radius: 14px;
+      padding: 13px 15px; margin-bottom: 10px; font-size: 15px; line-height: 1.4;
     }
-    #nudge .arrow {
-      position: absolute;
-      top: -14px; right: 16px;
-      font-size: 20px; line-height: 1;
-      color: #3D3D3D;
-      transform: translateY(-2px);
+    ol.steps li .n {
+      flex: 0 0 24px; width: 24px; height: 24px; border-radius: 50%;
+      background: #E8899E; color: #fff; font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; margin-top: 1px;
     }
-    #nudge b { color: #fff; }
-    #nudge .big { display: block; font-weight: 700; font-size: 14px; margin-bottom: 2px; }
+    ol.steps li b { color: #3D3D3D; }
+    .dots-chip { display:inline-block; background:#F0EEEC; border-radius:6px; padding:0 7px; font-weight:700; letter-spacing:1px; }
+    .alt { font-size: 13px; color: #9E9E9E; margin-top: 18px; line-height: 1.5; }
+    .alt b { color: #6b6b6b; }
+
+    /* Bouncing arrow pointing at the ••• menu (top-right) */
+    #arrow {
+      display: none; position: fixed;
+      top: calc(6px + env(safe-area-inset-top)); right: 14px;
+      z-index: 20; text-align: center; animation: bob 1s ease-in-out infinite;
+    }
+    #arrow .up { font-size: 26px; line-height: 1; color: #E8899E; }
+    #arrow .lbl {
+      display:block; margin-top:2px; background:#3D3D3D; color:#fff;
+      font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 8px; white-space: nowrap;
+    }
+    @keyframes bob { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-6px);} }
     @media (prefers-color-scheme: dark) {
-      #nudge { background: #f2f2f2; color: #1c1c1c; }
-      #nudge b { color: #000; }
-      #nudge .arrow { color: #f2f2f2; }
+      #arrow .lbl { background:#f2f2f2; color:#1c1c1c; }
     }
   </style>
 </head>
 <body>
-  <!-- Escape hatch for in-app browsers (Instagram/Facebook) that block the App Store handoff -->
-  <div id="nudge" role="note">
-    <span class="arrow">▲</span>
-    <span class="big">Blank page? Instagram is blocking it.</span>
-    Tap the <b>•••</b> at the top&nbsp;right, then <b>“Open in&nbsp;browser.”</b>
-  </div>
+  <div id="arrow"><div class="up">↑</div><span class="lbl">••• is up here</span></div>
 
   <div class="card">
     <div class="mark"><span>i</span></div>
     <h1>Intentions</h1>
     <p class="sub">Stop doomscrolling. Reclaim your time.</p>
 
-    <a id="cta" class="btn" href="https://apps.apple.com/us/app/intentions-stop-doomscrolling/id6757707992">
-      <svg viewBox="0 0 384 512" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26 2 49.7-11.4 69.5-34.3z"/></svg>
-      Get it on the App Store
-    </a>
+    <!-- Default: direct handoff (works in Safari / TikTok / desktop) -->
+    <div id="direct">
+      <a id="cta" class="btn" href="https://apps.apple.com/us/app/intentions-stop-doomscrolling/id6757707992">
+        <svg viewBox="0 0 384 512" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26 2 49.7-11.4 69.5-34.3z"/></svg>
+        Get it on the App Store
+      </a>
+      <p class="hint">Opening the App Store…</p>
+    </div>
 
-    <p class="hint" id="hint">Tap the button above to open the App&nbsp;Store.</p>
+    <!-- Instagram / Facebook: only the ••• → Open in browser path works -->
+    <div id="steps">
+      <p class="steps-title">One quick step to download 👇</p>
+      <p class="steps-sub">Instagram blocks App&nbsp;Store links — here's the fix:</p>
+      <ol class="steps">
+        <li><span class="n">1</span><span>Tap <span class="dots-chip">•••</span> in the top-right corner</span></li>
+        <li><span class="n">2</span><span>Choose <b>“Open in browser”</b></span></li>
+        <li><span class="n">3</span><span>The App&nbsp;Store opens automatically ✨</span></li>
+      </ol>
+      <p class="alt">Or just search <b>“Intentions: Stop Doomscrolling”</b> in the App&nbsp;Store.</p>
+    </div>
   </div>
 
   <script>
@@ -106,26 +114,23 @@
 
       var ua    = navigator.userAgent || '';
       var isIOS = /iPhone|iPad|iPod/i.test(ua) ||
-                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // iPadOS
-      // In-app browsers that block the automatic handoff to the App Store:
-      var inApp = /(FBAN|FBAV|FB_IAB|FBIOS|Instagram|Messenger|Line\/|MicroMessenger|Snapchat|Pinterest|Twitter|TikTok|musical_ly|BytedanceWebview)/i.test(ua);
+                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      // Confirmed by testing: Meta's in-app browser blocks the App Store handoff entirely
+      // (even a direct itms-apps:// tap does nothing). Only ••• → Open in browser works.
+      var isMeta = /(FBAN|FBAV|FB_IAB|FBIOS|Instagram|Messenger)/i.test(ua);
 
-      // On iOS the itms-apps scheme opens the App Store app directly on a real tap.
-      var target = isIOS ? SCHEME : HTTPS;
-      document.getElementById('cta').setAttribute('href', target);
-
-      // ?preview or #preview = just show the page (no auto-redirect) for design checks.
       var preview = /preview/.test(location.search + location.hash);
 
-      if (inApp || preview) {
-        // In an in-app browser the handoff needs a finger tap. Show the button,
-        // and surface the always-works escape hatch (••• → Open in browser).
-        document.getElementById('hint').innerHTML =
-          'If the button doesn’t open the App Store, use <b>Open in browser</b> →';
-        document.getElementById('nudge').style.display = 'block';
+      if (isMeta && !preview) {
+        // Show the guided path — hide the dead button so nobody taps a no-op.
+        document.getElementById('direct').style.display = 'none';
+        document.getElementById('steps').style.display  = 'block';
+        document.getElementById('arrow').style.display  = 'block';
       } else {
-        // Real browser (Safari / Chrome / desktop): send them straight through, no extra tap.
-        setTimeout(function () { try { window.location.href = target; } catch (e) {} }, 60);
+        // Safari / Chrome / TikTok / desktop: hand off directly, no extra tap.
+        var target = isIOS ? SCHEME : HTTPS;
+        document.getElementById('cta').setAttribute('href', target);
+        if (!preview) setTimeout(function () { try { window.location.href = target; } catch (e) {} }, 60);
       }
     })();
   </script>
