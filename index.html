@@ -13,19 +13,25 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: #FAF9F8; color: #3D3D3D;
       display: flex; align-items: center; justify-content: center;
-      padding: calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));
+      padding: calc(24px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));
       text-align: center;
     }
-    .card { width: 100%; max-width: 360px; }
+    /* Instagram/FB: pin the card near the top so it sits high on screen and
+       leaves the top-right clear for the ••• arrow. */
+    body.meta {
+      align-items: flex-start;
+      padding-top: calc(58px + env(safe-area-inset-top));
+    }
+    .card { width: 100%; max-width: 380px; }
     .mark {
-      width: 64px; height: 64px; margin: 0 auto 18px; border-radius: 18px;
+      width: 72px; height: 72px; margin: 0 auto 18px; border-radius: 20px;
       background: linear-gradient(160deg, #F3A9BC 0%, #E8899E 100%);
       display: flex; align-items: center; justify-content: center;
       box-shadow: 0 10px 30px rgba(232, 137, 158, 0.35);
     }
-    .mark span { color: #fff; font-size: 34px; font-weight: 700; line-height: 1; }
-    h1 { font-size: 24px; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.4px; }
-    .sub { font-size: 14px; color: #6b6b6b; margin: 0 0 26px; line-height: 1.45; }
+    .mark span { color: #fff; font-size: 38px; font-weight: 700; line-height: 1; }
+    h1 { font-size: 33px; font-weight: 700; margin: 0 0 7px; letter-spacing: -0.6px; }
+    .sub { font-size: 17px; color: #6b6b6b; margin: 0 0 26px; line-height: 1.45; }
 
     /* Direct button (Safari / TikTok / desktop) */
     .btn {
@@ -41,34 +47,43 @@
 
     /* Meta (Instagram/FB) instruction card — the only path that works there */
     #steps { display: none; }
-    .steps-title { font-size: 16px; font-weight: 700; margin: 0 0 4px; }
-    .steps-sub { font-size: 13px; color: #9E9E9E; margin: 0 0 20px; }
-    ol.steps { text-align: left; margin: 0 auto; padding: 0; list-style: none; max-width: 300px; }
+    .steps-title { font-size: 21px; font-weight: 700; margin: 0 0 5px; letter-spacing: -0.3px; }
+    .steps-sub { font-size: 15px; color: #8a8a8a; margin: 0 0 18px; line-height: 1.4; }
+    ol.steps { text-align: left; margin: 0 auto; padding: 0; list-style: none; }
     ol.steps li {
       display: flex; align-items: flex-start; gap: 12px;
       background: #fff; border: 1px solid rgba(232,137,158,.28); border-radius: 14px;
-      padding: 13px 15px; margin-bottom: 10px; font-size: 15px; line-height: 1.4;
+      padding: 16px 16px; margin-bottom: 11px; font-size: 18px; line-height: 1.38;
     }
     ol.steps li .n {
-      flex: 0 0 24px; width: 24px; height: 24px; border-radius: 50%;
-      background: #E8899E; color: #fff; font-size: 13px; font-weight: 700;
+      flex: 0 0 28px; width: 28px; height: 28px; border-radius: 50%;
+      background: #E8899E; color: #fff; font-size: 15px; font-weight: 700;
       display: flex; align-items: center; justify-content: center; margin-top: 1px;
     }
     ol.steps li b { color: #3D3D3D; }
-    .dots-chip { display:inline-block; background:#F0EEEC; border-radius:6px; padding:0 7px; font-weight:700; letter-spacing:1px; }
-    .alt { font-size: 13px; color: #9E9E9E; margin-top: 18px; line-height: 1.5; }
+    .dots-chip { display:inline-block; background:#F0EEEC; border-radius:6px; padding:0 8px; font-weight:700; letter-spacing:1px; }
+    .alt { font-size: 16px; color: #9E9E9E; margin-top: 18px; line-height: 1.5; }
     .alt b { color: #6b6b6b; }
 
-    /* Bouncing arrow pointing at the ••• menu (top-right) */
+    /* Bouncing arrow pointing at the ••• menu (top-right).
+       Meta's in-app browser toolbar is [X] ... [Meta AI] [•••] — the ••• is always
+       the RIGHTMOST button. Measured off a 430pt iPhone: ••• centre sits 30pt in
+       from the right edge, Meta AI's icon 74pt in. Anchor the arrowhead at 30px;
+       do NOT centre it over the label (that ~100px-wide chip used to drop the tip
+       at ~64px — i.e. straight onto the Meta AI button). */
     #arrow {
       display: none; position: fixed;
-      top: calc(6px + env(safe-area-inset-top)); right: 14px;
-      z-index: 20; text-align: center; animation: bob 1s ease-in-out infinite;
+      top: calc(4px + env(safe-area-inset-top)); left: 0; right: 0; height: 0;
+      z-index: 20; pointer-events: none; animation: bob 1s ease-in-out infinite;
     }
-    #arrow .up { font-size: 26px; line-height: 1; color: #E8899E; }
+    #arrow .up {
+      position: absolute; top: 0; right: 30px; transform: translateX(50%);
+      font-size: 30px; line-height: 1; font-weight: 700; color: #E8899E;
+    }
     #arrow .lbl {
-      display:block; margin-top:2px; background:#3D3D3D; color:#fff;
-      font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 8px; white-space: nowrap;
+      position: absolute; top: 36px; right: 12px;
+      background:#3D3D3D; color:#fff;
+      font-size: 12px; font-weight: 600; padding: 5px 9px; border-radius: 8px; white-space: nowrap;
     }
     @keyframes bob { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-6px);} }
     @media (prefers-color-scheme: dark) {
@@ -98,7 +113,7 @@
       <p class="steps-title">One quick step to download 👇</p>
       <p class="steps-sub">Instagram blocks App&nbsp;Store links — here's the fix:</p>
       <ol class="steps">
-        <li><span class="n">1</span><span>Tap <span class="dots-chip">•••</span> in the top-right corner</span></li>
+        <li><span class="n">1</span><span>Tap <span class="dots-chip">•••</span> in the far top-right corner</span></li>
         <li><span class="n">2</span><span>Choose <b>“Open in external browser”</b></span></li>
         <li><span class="n">3</span><span>The App&nbsp;Store opens automatically ✨</span></li>
       </ol>
@@ -119,10 +134,17 @@
       // (even a direct itms-apps:// tap does nothing). Only ••• → Open in browser works.
       var isMeta = /(FBAN|FBAV|FB_IAB|FBIOS|Instagram|Messenger)/i.test(ua);
 
-      var preview = /preview/.test(location.search + location.hash);
+      var qs = (location.search + location.hash).toLowerCase();
+      // ?preview  → show the direct button but DON'T auto-redirect (inspect the Safari path)
+      // ?ig       → force the Instagram steps screen in any browser (inspect the Meta path).
+      //             Note: the ••• arrow is calibrated to Instagram's toolbar, so in Safari it
+      //             points at empty space. Layout/sizing are accurate; arrow aim is not.
+      var preview    = /preview/.test(qs);
+      var forceSteps = /\big\b|\bsteps\b/.test(qs);
 
-      if (isMeta && !preview) {
+      if (forceSteps || (isMeta && !preview)) {
         // Show the guided path — hide the dead button so nobody taps a no-op.
+        document.body.classList.add('meta');   // top-align the card, clear room for the arrow
         document.getElementById('direct').style.display = 'none';
         document.getElementById('steps').style.display  = 'block';
         document.getElementById('arrow').style.display  = 'block';
