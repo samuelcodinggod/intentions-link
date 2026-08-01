@@ -128,13 +128,45 @@
       // (even a direct itms-apps:// tap does nothing). Only ••• → Open in browser works.
       var isMeta = /(FBAN|FBAV|FB_IAB|FBIOS|Instagram|Messenger)/i.test(ua);
 
-      var qs = (location.search + location.hash).toLowerCase();
-      // ?preview  → show the direct button but DON'T auto-redirect (inspect the Safari path)
-      // ?ig       → force the Instagram steps screen in any browser (inspect the Meta path).
-      //             Note: the ••• arrow is calibrated to Instagram's toolbar, so in Safari it
-      //             points at empty space. Layout/sizing are accurate; arrow aim is not.
-      var preview    = /preview/.test(qs);
-      var forceSteps = /\big\b|\bsteps\b/.test(qs);
+      // Query flags. These MUST match parameter names exactly. A previous substring
+      // test (/\big\b/ over search+hash) also matched tracking-tagged links such as
+      // ?utm_source=ig, ?ref=ig and ?from=ig — which forced the Instagram steps
+      // screen inside real browsers and so broke the ••• → "Open in external
+      // browser" handoff: Safari re-rendered the steps screen instead of jumping
+      // to the App Store, leaving the user staring at instructions for a ••• menu
+      // that doesn't exist there. Never pattern-match a whole query string again.
+      //   ?preview → show the direct button but DON'T auto-redirect
+      //   ?ig      → force the steps screen in any browser (arrow aim is only
+      //              meaningful against Instagram's real toolbar)
+      //   ?debug   → dump UA + resolved flags instead of rendering
+      var hasParam = function (name) {
+        try { return new URLSearchParams(location.search).has(name); }
+        catch (e) { return new RegExp('[?&]' + name + '(?=$|[=&])').test(location.search); }
+      };
+      var preview    = hasParam('preview');
+      var forceSteps = hasParam('ig') || hasParam('steps');
+
+      if (hasParam('debug')) {
+        var esc = function (t) {
+          return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        };
+        document.body.style.cssText = 'display:block;text-align:left;padding:0;background:#FAF9F8';
+        document.body.innerHTML =
+          '<pre style="font:12px/1.6 ui-monospace,Menlo,monospace;white-space:pre-wrap;' +
+          'word-break:break-all;padding:16px;margin:0;color:#3D3D3D">' +
+          'URL\n'         + esc(location.href) +
+          '\n\nUSER AGENT\n' + esc(ua) +
+          '\n\nFLAGS\nisIOS      = ' + isIOS +
+          '\nisMeta     = ' + isMeta +
+          '\npreview    = ' + preview +
+          '\nforceSteps = ' + forceSteps +
+          '\n\nWOULD SHOW\n' +
+          ((forceSteps || (isMeta && !preview))
+            ? 'steps screen (Instagram path)'
+            : 'direct App Store handoff') +
+          '</pre>';
+        return;
+      }
 
       if (forceSteps || (isMeta && !preview)) {
         // Show the guided path — hide the dead button so nobody taps a no-op.
